@@ -100,3 +100,6 @@ ENV/
 
 helper_const.py
 nohup.out
+
+#vscode
+.vscode/
