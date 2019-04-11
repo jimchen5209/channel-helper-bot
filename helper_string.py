@@ -14,7 +14,7 @@ helper_string = {
     "reload_cmd_failed": "嗯，好像出現了一些問題呢…",
     "start_cmd_text": "這是由 JogleLew 開發的頻道回覆助手 Bot 。你可以使用 /help 命令查看詳細使用說明。", 
     "help_cmd_text": "歡迎使用 Channel Helper Bot，本 bot 可以為您的頻道提供回覆和展示評論信息的入口，從而為頻道提供互動的平臺。\nGithub鏈接：https://github.com/JogleLew/channel-helper-bot\n使用此 bot 即為允許本 bot 在您的頻道內進行發送、編輯和刪除操作，並收集和存儲評論信息。\n使用步驟：\n1. 使用 /register 命令登記您的頻道信息。\n2. 將此 bot 添加為頻道管理員。\n3. 完成。如需更改配置請使用 /option 命令。",
-    "add_comment": "留言",
+    "add_comment": "新增留言",
     "show_all_comments": "顯示所有留言",
     "comment_header": "===== 留言區 =====",
     "comment_empty": "",
