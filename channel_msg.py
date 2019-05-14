@@ -109,16 +109,15 @@ def deforward(bot, msg):
                 msg.forward_from.id, 
                 msg.forward_from.first_name + " " + avoidNone(msg.forward_from.last_name)
             )
+    elif msg.forward_sender_name:
+        forward_info = helper_global.value('fwd_source', 'Forwarded from:') + msg.forward_sender_name
     elif msg.forward_from_chat:
         # Check channel public/private
         if msg.forward_from_chat.username:
-            if msg.forward_from_chat.id == -1001228946795:
-                forward_info = helper_global.value('fwd_source', 'Forwarded from:') + msg.forward_signature
-            else:
-                forward_info = helper_global.value('fwd_source', 'Forwarded from:') + 'https://t.me/%s/%s' % (
-                    msg.forward_from_chat.username,
-                    msg.forward_from_message_id
-                )
+            forward_info = helper_global.value('fwd_source', 'Forwarded from:') + 'https://t.me/%s/%s' % (
+                msg.forward_from_chat.username,
+                msg.forward_from_message_id
+            )
             has_msg_link = True
         else:
             forward_info = helper_global.value('fwd_source', 'Forwarded from:') + msg.forward_from_chat.title
