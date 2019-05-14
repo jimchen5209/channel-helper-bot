@@ -22,7 +22,8 @@ def init_database(filepath):
             mode      int,
             recent    int,
             username  text,
-            admin_id  text
+            admin_id  text,
+            notify    int
         );
         """
     )
@@ -49,6 +50,16 @@ def init_database(filepath):
             date        text,
             user_id     text,
             ori_msg_id  text
+        );
+        """
+    )
+    cursor.execute(
+        """
+        CREATE TABLE blacklist (
+            chat_id     text,
+            user_id     text,
+            name        text,
+            PRIMARY KEY (chat_id, user_id)
         );
         """
     )
@@ -94,9 +105,9 @@ def get_all_channel_config():
     return result
 
 
-def add_channel_config(channel_id, lang, mode, recent, channel_username, admin_id):
-    script = "INSERT INTO config VALUES (?, ?, ?, ?, ?, ?)"
-    params = [str(channel_id), lang, mode, recent, channel_username, str(admin_id)]
+def add_channel_config(channel_id, lang, mode, recent, channel_username, admin_id, notify):
+    script = "INSERT INTO config VALUES (?, ?, ?, ?, ?, ?, ?)"
+    params = [str(channel_id), lang, mode, recent, channel_username, str(admin_id), notify]
     execute(script, params)
 
 
@@ -141,7 +152,7 @@ def add_record(channel_id, msg_id, username, name, msg_type, msg_content, media_
 
 
 def get_comment_id(channel_id, msg_id):
-    script = "SELECT comment_id FROM reflect where chat_id = ? and msg_id = ?"
+    script = "SELECT comment_id FROM reflect WHERE chat_id = ? and msg_id = ?"
     params = [str(channel_id), str(msg_id)]
     result = list(execute(script, params))
     if len(result) == 0:
@@ -151,17 +162,77 @@ def get_comment_id(channel_id, msg_id):
 
 
 def get_recent_records(channel_id, msg_id, recent, offset=0):
-    script = "SELECT * FROM record where chat_id = ? and msg_id = ? ORDER BY date DESC LIMIT ? OFFSET ?"
+    script = "SELECT *, ROWID FROM record WHERE chat_id = ? and msg_id = ? ORDER BY date DESC LIMIT ? OFFSET ?"
     params = [str(channel_id), str(msg_id), recent, offset * recent]
     result = list(execute(script, params))
     return result
 
 
+def get_record_by_rowid(row_id):
+    script = "SELECT * FROM record WHERE ROWID = ?"
+    params = [row_id]
+    result = list(execute(script, params))
+    return result
+
+
+def delete_record_by_rowid(row_id):
+    script = "DELETE FROM record WHERE ROWID = ?"
+    params = [row_id]
+    result = list(execute(script, params))
+    return result
+
+
+def get_base_offset_by_rowid(channel_id, msg_id, row_id):
+    script = "SELECT count(*) FROM record WHERE chat_id = ? AND msg_id = ? AND ROWID >= ?"
+    params = [str(channel_id), str(msg_id), row_id]
+    result = list(execute(script, params))
+    return result[0][0]
+
+
+def get_prev_rowid(channel_id, msg_id, row_id):
+    script = "SELECT ROWID FROM record WHERE chat_id = ? AND msg_id = ? AND ROWID > ? ORDER BY ROWID ASC LIMIT 1"
+    params = [str(channel_id), str(msg_id), row_id]
+    result = list(execute(script, params))
+    if result is not None and len(result) == 1:
+        return result[0][0]
+    return -1
+
+
+def get_next_rowid(channel_id, msg_id, row_id):
+    script = "SELECT ROWID FROM record WHERE chat_id = ? AND msg_id = ? AND ROWID < ? ORDER BY ROWID DESC LIMIT 1"
+    params = [str(channel_id), str(msg_id), row_id]
+    result = list(execute(script, params))
+    if result is not None and len(result) == 1:
+        return result[0][0]
+    return -1
+
+
 def get_channel_info_by_user(user_id):
-    script = "SELECT chat_id, username FROM config where admin_id = ?"
+    script = "SELECT chat_id, username FROM config WHERE admin_id = ?"
     params = [str(user_id)]
     result = list(execute(script, params))
     return result
+
+
+def ban_user(channel_id, user_id, name):
+    script = "INSERT INTO blacklist VALUES (?, ?, ?)"
+    params = [str(channel_id), str(user_id), name]
+    result = list(execute(script, params))
+    return result
+
+
+def unban_user(channel_id, user_id, name):
+    script = "DELETE FROM blacklist WHERE chat_id = ? AND user_id = ?"
+    params = [str(channel_id), str(user_id)]
+    result = list(execute(script, params))
+    return result
+
+
+def check_ban(channel_id, user_id):
+    script = "SELECT * FROM blacklist WHERE chat_id = ? AND user_id = ?"
+    params = [str(channel_id), str(user_id)]
+    result = list(execute(script, params))
+    return len(result) > 0
 
 
 lock = Lock()
