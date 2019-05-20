@@ -20,7 +20,7 @@ helper_string = {
     "comment_empty": "",
     "start_comment_mode": "您已進入留言模式，向我傳送訊息即可進行留言。使用 /cancel 命令可以中止留言模式。",
     "stop_comment_mode": "您已離開留言模式",
-    "comment_success": "留言成功！如果需要編輯流厭，直接編輯已送出的訊息即可。",
+    "comment_success": "留言成功！如果需要編輯留言，直接編輯已送出的訊息即可。",
     "comment_edit_success": "編輯留言成功",
     "prev_page": "上一頁",
     "next_page": "下一頁",
