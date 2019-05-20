@@ -109,8 +109,8 @@ def deforward(bot, msg):
                 msg.forward_from.id, 
                 msg.forward_from.first_name + " " + avoidNone(msg.forward_from.last_name)
             )
-    elif msg.forward_sender_name:
-        forward_info = helper_global.value('fwd_source', 'Forwarded from:') + msg.forward_sender_name
+    #elif msg.forward_sender_name:
+    #    forward_info = helper_global.value('fwd_source', 'Forwarded from:') + msg.forward_sender_name
     elif msg.forward_from_chat:
         # Check channel public/private
         if msg.forward_from_chat.username:
