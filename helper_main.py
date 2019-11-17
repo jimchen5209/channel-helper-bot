@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """ Channel Helper Bot """
+from status.status import Status
+
 """ helper_main.py """
 """ Copyright 2018, Jogle Lew """
 import json
@@ -180,5 +182,7 @@ for module_name in helper_const.MODULE_NAME:
     dispatcher.add_handler(current_module._handler)
 
 
+status = Status("channel helper")
+status.set_status()
 updater.start_polling()
 
